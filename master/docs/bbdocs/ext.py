@@ -14,8 +14,8 @@
 # Copyright Buildbot Team Members
 
 from docutils import nodes
-from docutils.parsers.rst import Directive
 from sphinx import addnodes
+from sphinx.directives import ObjectDescription
 from sphinx.domains import Domain
 from sphinx.domains import Index
 from sphinx.domains import ObjType
@@ -30,7 +30,7 @@ from sphinx.util.nodes import make_refnode
 logger = logging.getLogger(__name__)
 
 
-class BBRefTargetDirective(Directive):
+class BBRefTargetDirective(ObjectDescription):
 
     """
     A directive that can be a target for references.  Attributes:
@@ -48,7 +48,7 @@ class BBRefTargetDirective(Directive):
     domain = 'bb'
 
     def run(self):
-        self.env = env = self.state.document.settings.env
+        env = self.env
         # normalize whitespace in fullname like XRefRole does
         fullname = ws_re.sub(' ', self.arguments[0].strip())
         targetname = '{}-{}'.format(self.ref_type, fullname)
