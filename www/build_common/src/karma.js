@@ -49,6 +49,13 @@ module.exports.createTemplateKarmaConfig = function(config, options) {
                     '--no-sandbox',
                     '--window-size=1024,768',
                 ],
+            },
+            BBFirefoxHeadless: {
+                base: 'FirefoxHeadless',
+                flags: [
+                    '--width=1024',
+                    '--height=768',
+                ],
             }
         },
     });
