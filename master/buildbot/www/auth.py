@@ -161,12 +161,29 @@ class TwistedICredAuthBase(AuthBase):
             self.credentialFactories)
 
 
+def _htpasswd_hash(username, password, hash_line):
+    import passlib.hash
+
+    if hash_line.startswith(b'$apr1$'):
+        _, salt, _ = filter(None, hash_line.split(b'$'))
+        salt = salt[:8].decode('utf-8')
+        return passlib.hash.apr_md5_crypt.using(salt=salt).hash(password).encode('ascii')
+    elif hash_line.startswith(b'$2y$'):
+        _, rounds, salt = filter(None, hash_line.split(b'$'))
+        rounds = int(rounds)
+        salt = salt[:22].decode('utf-8')
+        return passlib.hash.bcrypt.using(salt=salt, rounds=rounds, ident='2y').hash(password).encode('ascii')
+    else:
+        return password
+
+
+
 class HTPasswdAuth(TwistedICredAuthBase):
 
     def __init__(self, passwdFile, **kwargs):
-        super().__init__([DigestCredentialFactory(b"MD5", b"buildbot"),
+        super().__init__([
              BasicCredentialFactory(b"buildbot")],
-            [FilePasswordDB(passwdFile)],
+            [FilePasswordDB(passwdFile, hash=_htpasswd_hash)],
             **kwargs)
 
 
