@@ -635,9 +635,9 @@ class Worker(WorkerBase):
             if connection_string is None:
                 ws_conn_string = "ws://{}:{}".format(buildmaster_host, port)
             else:
-                from urllib.parse import urlparse
-                parsed_url = urlparse(connection_string)
-                ws_conn_string = "ws://{}:{}".format(parsed_url.hostname, parsed_url.port)
+                from twisted.internet.endpoints import _parse
+                args, kwargs = _parse(connection_string)
+                ws_conn_string = "ws://{}:{}".format(kwargs['host'], kwargs['port'])
 
             bf = self.bf = BuildbotWebSocketClientFactory(ws_conn_string)
             bf.protocol = BuildbotWebSocketClientProtocol

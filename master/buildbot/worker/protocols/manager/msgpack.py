@@ -419,6 +419,8 @@ class Dispatcher(BaseDispatcher):
             port = self.DUMMY_PORT
 
         self.serverFactory = WebSocketServerFactory(f"ws://0.0.0.0:{port}")
+        pingInterval = 30  # TODO: make this configurable
+        self.serverFactory.setProtocolOptions(autoPingInterval=pingInterval)
         self.serverFactory.buildbot_dispatcher = self
         self.serverFactory.protocol = BuildbotWebSocketServerProtocol
 
